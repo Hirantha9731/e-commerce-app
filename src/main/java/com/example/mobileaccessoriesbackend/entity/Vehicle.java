@@ -1,7 +1,12 @@
 package com.example.mobileaccessoriesbackend.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "vehicles")
 public class Vehicle {
@@ -19,44 +24,5 @@ public class Vehicle {
     @Column(name = "vehicleStatus")
     private String vehicleStatus;
 
-    public Vehicle() {
-    }
 
-    public Vehicle(String vehicleType, String vehicleNumber, String vehicleStatus) {
-        this.vehicleType = vehicleType;
-        this.vehicleNumber = vehicleNumber;
-        this.vehicleStatus = vehicleStatus;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(String vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
-
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
-
-    public String getVehicleStatus() {
-        return vehicleStatus;
-    }
-
-    public void setVehicleStatus(String vehicleStatus) {
-        this.vehicleStatus = vehicleStatus;
-    }
 }

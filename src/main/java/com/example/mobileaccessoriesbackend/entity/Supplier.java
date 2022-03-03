@@ -13,26 +13,5 @@ public class Supplier {
     @Column(name = "brandName")
     private String brandName;
 
-    public Supplier() {
-    }
 
-    public Supplier(String brandName) {
-        this.brandName = brandName;
-    }
-
-    public long getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(long supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
-    }
 }

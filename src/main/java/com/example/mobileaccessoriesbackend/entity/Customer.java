@@ -23,41 +23,5 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String address, String customerName, String customerContact) {
-        this.address = address;
-        this.customerName = customerName;
-        this.customerContact = customerContact;
-    }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getCustomerContact() {
-        return customerContact;
-    }
-
-    public void setCustomerContact(String customerContact) {
-        this.customerContact = customerContact;
-    }
 }

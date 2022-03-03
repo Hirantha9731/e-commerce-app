@@ -1,8 +1,13 @@
 package com.example.mobileaccessoriesbackend.entity;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Branches")
 public class Branch {
@@ -17,35 +22,5 @@ public class Branch {
     @Column(name = "branchLocation")
     private String branchLocation;
 
-    public Branch() {
-    }
 
-    public Branch(String branchName, String branchLocation) {
-        this.branchName = branchName;
-        this.branchLocation = branchLocation;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getBranchName() {
-        return branchName;
-    }
-
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
-
-    public String getBranchLocation() {
-        return branchLocation;
-    }
-
-    public void setBranchLocation(String branchLocation) {
-        this.branchLocation = branchLocation;
-    }
 }

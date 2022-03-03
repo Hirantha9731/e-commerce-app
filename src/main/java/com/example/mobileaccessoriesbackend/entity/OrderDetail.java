@@ -1,7 +1,12 @@
 package com.example.mobileaccessoriesbackend.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "orderDetails")
 public class OrderDetail {
@@ -19,44 +24,5 @@ public class OrderDetail {
     @Column(name = "productQt")
     private int productQt;
 
-    public OrderDetail() {
-    }
 
-    public OrderDetail(long orderId, long productId, int productQt) {
-        this.orderId = orderId;
-        this.productId = productId;
-        this.productQt = productQt;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
-
-    public long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
-    }
-
-    public int getProductQt() {
-        return productQt;
-    }
-
-    public void setProductQt(int productQt) {
-        this.productQt = productQt;
-    }
 }
