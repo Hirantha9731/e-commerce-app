@@ -1,4 +1,4 @@
 package com.example.mobileaccessoriesbackend.services.interfaces;
 
-public interface CustomerService {
+public interface ICustomerService {
 }
