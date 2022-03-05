@@ -25,8 +25,11 @@ public class Product {
     @Column(name = "sellingPrice")
     private Double sellingPrice;
 
-    @Column(name = "supplierId")
-    private long supplierId;
+    @Column(name = "imageUrl")
+    private String imgUrl;
 
+    @ManyToOne
+    @JoinColumn(name = "supplierId")
+    private Supplier supplierId;
 
 }

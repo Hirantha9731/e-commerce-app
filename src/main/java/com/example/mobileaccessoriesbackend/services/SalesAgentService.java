@@ -3,14 +3,12 @@ package com.example.mobileaccessoriesbackend.services;
 import com.example.mobileaccessoriesbackend.dto.request.SalesAgentRequest;
 import com.example.mobileaccessoriesbackend.dto.response.BranchResponse;
 import com.example.mobileaccessoriesbackend.dto.response.SalesAgentResponse;
-import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
 import com.example.mobileaccessoriesbackend.entity.SalesAgent;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
 import com.example.mobileaccessoriesbackend.repository.SalesAgentRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.IBranchService;
 import com.example.mobileaccessoriesbackend.services.interfaces.ISalesAgentService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 
@@ -30,16 +28,15 @@ public class SalesAgentService implements ISalesAgentService {
         this.branchService = branchService;
     }
 
-
+    /**
+     *
+     * @return
+     */
     @Override
-    public ResponseEntity<?> getAllSalesAgents() {
+    public List<SalesAgentResponse> getAllSalesAgents() {
         List<SalesAgent> agents = salesAgentRepository.findAll();
-        List<SalesAgentResponse> agentResponses  = agents.stream().map(this::response).collect(Collectors.toList());
-        return ResponseEntity.ok().body(new StandardResponse(
-                HttpStatus.OK,
-                "sales agents found",
-                agentResponses
-        ));
+        return agents.stream().map(this::response).collect(Collectors.toList());
+
     }
 
     /**
@@ -48,7 +45,7 @@ public class SalesAgentService implements ISalesAgentService {
      * @return
      */
     @Override
-    public ResponseEntity<?> createSalesAgent(SalesAgentRequest salesAgentRequest) {
+    public SalesAgentResponse createSalesAgent(SalesAgentRequest salesAgentRequest) {
         SalesAgent salesAgent1 = new SalesAgent();
 
         salesAgent1.setName(salesAgentRequest.getName());
@@ -59,7 +56,7 @@ public class SalesAgentService implements ISalesAgentService {
         SalesAgent response = salesAgentRepository.save(salesAgent1);
 
 
-        SalesAgentResponse salesAgentResponse = new SalesAgentResponse(
+        return new SalesAgentResponse(
                 response.getId(),
                 response.getName(),
                 response.getUsername(),
@@ -69,24 +66,44 @@ public class SalesAgentService implements ISalesAgentService {
                         response.getBranchId().getBranchName() ,
                         response.getBranchId().getBranchLocation()));
 
-        return ResponseEntity.ok().body(new StandardResponse(
-                HttpStatus.CREATED,
-                "Sales Agent Successfully saved",
-                salesAgentResponse
-        ));
+    }
+
+    @Override
+    public SalesAgentResponse findSalesAgentById(Long id) {
+        SalesAgent salesAgent = salesAgentRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Sales Agent not exist with id :" + id));
+
+        return response(salesAgent);
 
     }
 
     @Override
-    public ResponseEntity<?> findSalesAgentById(Long id) {
-        SalesAgent salesAgent = salesAgentRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Sales Agent not exist with id :" + id));
+    public SalesAgentResponse updateSalesAgent(SalesAgentRequest salesAgentRequest) {
+        if (salesAgentRequest.getId() != null){
+            this.findSalesAgentById(salesAgentRequest.getId());
 
-        return ResponseEntity.ok().body(new StandardResponse(
-                HttpStatus.CREATED,
-                "Sales Agent Found",
-                response(salesAgent)
-        ));
+            SalesAgent salesAgent = salesAgentRepository.findById(salesAgentRequest.getId())
+                    .orElseThrow(()-> new ResourceNotFoundException("Sales Agent not exist with id :" + salesAgentRequest.getId()));
+
+            salesAgent.setName(salesAgentRequest.getName());
+            salesAgent.setUsername(salesAgentRequest.getUsername());
+            salesAgent.setContactNo(salesAgentRequest.getContactNo());
+
+            SalesAgent response = salesAgentRepository.save(salesAgent);
+
+            return new SalesAgentResponse(
+                    response.getId(),
+                    response.getName(),
+                    response.getUsername(),
+                    response.getContactNo(),
+                    new BranchResponse(
+                            response.getBranchId().getId(),
+                            response.getBranchId().getBranchName() ,
+                            response.getBranchId().getBranchLocation()));
+        }
+        else {
+            throw new ResourceNotFoundException("Sales Agent not found");
+        }
     }
 
 
@@ -107,3 +124,4 @@ public class SalesAgentService implements ISalesAgentService {
     }
 
 }
+

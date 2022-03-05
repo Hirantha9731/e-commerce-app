@@ -2,8 +2,7 @@ package com.example.mobileaccessoriesbackend.services.interfaces;
 
 
 import com.example.mobileaccessoriesbackend.dto.request.SalesAgentRequest;
-import com.example.mobileaccessoriesbackend.entity.SalesAgent;
-import org.springframework.http.ResponseEntity;
+import com.example.mobileaccessoriesbackend.dto.response.SalesAgentResponse;
 
 
 import java.util.List;
@@ -11,13 +10,15 @@ import java.util.List;
 public interface ISalesAgentService {
 
 
-    ResponseEntity<?> getAllSalesAgents();
+    List<SalesAgentResponse> getAllSalesAgents();
 
     // create sales agent
-    ResponseEntity<?> createSalesAgent(SalesAgentRequest salesAgent);
+    SalesAgentResponse createSalesAgent(SalesAgentRequest salesAgent);
 
     // get sales agent by id
-    ResponseEntity<?> findSalesAgentById(Long id);
+    SalesAgentResponse findSalesAgentById(Long id);
+
+    SalesAgentResponse updateSalesAgent(SalesAgentRequest salesAgentRequest);
 
 
 
