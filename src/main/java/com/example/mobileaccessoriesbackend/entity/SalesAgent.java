@@ -32,4 +32,6 @@ public class SalesAgent {
     @ManyToOne
     @JoinColumn(name = "fk_branchId")
     private Branch branchId;
+
+
 }

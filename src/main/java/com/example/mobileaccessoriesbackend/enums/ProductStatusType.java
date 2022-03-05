@@ -1,6 +1,6 @@
 package com.example.mobileaccessoriesbackend.enums;
 
-public enum ProductStatus {
+public enum ProductStatusType {
     OUT_OF_STOCK,
     AVAILABLE,
     INACTIVE,

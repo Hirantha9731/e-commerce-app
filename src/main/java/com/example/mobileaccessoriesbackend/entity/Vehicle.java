@@ -1,5 +1,6 @@
 package com.example.mobileaccessoriesbackend.entity;
 
+import com.example.mobileaccessoriesbackend.enums.VehicleStatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class Vehicle {
     private String vehicleNumber;
 
     @Column(name = "vehicleStatus")
-    private String vehicleStatus;
+    private VehicleStatusType vehicleStatus;
 
 
 }
