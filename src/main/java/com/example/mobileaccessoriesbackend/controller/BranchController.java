@@ -2,7 +2,6 @@ package com.example.mobileaccessoriesbackend.controller;
 
 
 import com.example.mobileaccessoriesbackend.dto.response.BranchResponse;
-import com.example.mobileaccessoriesbackend.dto.response.ProductResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
 import com.example.mobileaccessoriesbackend.entity.Branch;
 import com.example.mobileaccessoriesbackend.services.interfaces.IBranchService;

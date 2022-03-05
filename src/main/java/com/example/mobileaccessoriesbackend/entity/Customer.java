@@ -38,8 +38,4 @@ public class Customer {
     @Column(name = "city ")
     private String city;
 
-
-
-
-
 }

@@ -46,7 +46,7 @@ public class SupplierController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id){
+    public ResponseEntity<?> getSupplierById(@PathVariable Long id){
 
         Supplier supplier = supplierService.findSupplierById(id);
         return ResponseEntity.ok().body(new StandardResponse(

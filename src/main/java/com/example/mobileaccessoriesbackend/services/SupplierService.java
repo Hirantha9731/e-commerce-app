@@ -48,7 +48,6 @@ public class SupplierService implements ISupplierService {
     public Supplier findSupplierById(Long id) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Branch is not exist with id : " + id));
-
         return supplier;
     }
 
