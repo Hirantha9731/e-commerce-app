@@ -12,22 +12,13 @@ public interface ISalesAgentService {
 
     List<SalesAgentResponse> getAllSalesAgents();
 
-    // create sales agent
     SalesAgentResponse createSalesAgent(SalesAgentRequest salesAgent);
 
-    // get sales agent by id
     SalesAgentResponse findSalesAgentById(Long id);
 
     SalesAgentResponse updateSalesAgent(SalesAgentRequest salesAgentRequest);
 
-
-
-
-
-
-
-
-
+    void deleteSalesAgent(Long id);
 
 
 }

@@ -1,15 +1,16 @@
 package com.example.mobileaccessoriesbackend.services.interfaces;
 
+import com.example.mobileaccessoriesbackend.dto.response.BranchResponse;
 import com.example.mobileaccessoriesbackend.entity.Branch;
-import org.springframework.http.ResponseEntity;
+
+
+import java.util.List;
 
 public interface IBranchService {
 
-    ResponseEntity<?> save(Branch branch);
-
-    Branch findByName(String name);
+    List<BranchResponse> getAllBranches();
 
     Branch findById(Long id);
 
-    ResponseEntity<?> findAll();
+
 }

@@ -1,6 +1,5 @@
 package com.example.mobileaccessoriesbackend.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BranchResponse {
+public class ProductResponse {
 
-    private Long id;
-    private String branchName;
-    private String branchLocation;
+    private long productId;
+    private String productName;
+    private Double sellingPrice;
+    private String imgUrl;
+    private SupplierResponse supplierId;
 }

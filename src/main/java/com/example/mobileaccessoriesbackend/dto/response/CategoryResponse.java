@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BranchResponse {
+public class CategoryResponse {
 
     private Long id;
-    private String branchName;
-    private String branchLocation;
+    private String categoryName;
 }

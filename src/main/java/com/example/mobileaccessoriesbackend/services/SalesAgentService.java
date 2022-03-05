@@ -68,6 +68,12 @@ public class SalesAgentService implements ISalesAgentService {
 
     }
 
+
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
     public SalesAgentResponse findSalesAgentById(Long id) {
         SalesAgent salesAgent = salesAgentRepository.findById(id)
@@ -77,6 +83,11 @@ public class SalesAgentService implements ISalesAgentService {
 
     }
 
+    /**
+     *
+     * @param salesAgentRequest
+     * @return
+     */
     @Override
     public SalesAgentResponse updateSalesAgent(SalesAgentRequest salesAgentRequest) {
         if (salesAgentRequest.getId() != null){
@@ -104,6 +115,28 @@ public class SalesAgentService implements ISalesAgentService {
         else {
             throw new ResourceNotFoundException("Sales Agent not found");
         }
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public void deleteSalesAgent(Long id) {
+        SalesAgentRequest salesAgentRequest = new SalesAgentRequest();
+
+        if (salesAgentRequest.getId() != null) {
+            this.findSalesAgentById(salesAgentRequest.getId());
+
+            SalesAgent salesAgent = salesAgentRepository.findById(salesAgentRequest.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Sales Agent not exist with id :" + salesAgentRequest.getId()));
+
+            salesAgentRepository.delete(salesAgent);
+        }
+        else {
+            throw new ResourceNotFoundException("Sales Agent not found");
+        }
+
     }
 
 

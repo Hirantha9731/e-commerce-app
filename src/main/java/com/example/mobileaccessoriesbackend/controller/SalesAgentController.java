@@ -28,7 +28,7 @@ public class SalesAgentController {
         List<SalesAgentResponse> allSalesAgents = salesAgentService.getAllSalesAgents();
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,
-                "Sales agent fetch successful",
+                "Sales agents fetch successful",
                 allSalesAgents
         ));
     }
