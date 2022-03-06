@@ -75,11 +75,11 @@ public class SalesAgentService implements ISalesAgentService {
      * @return
      */
     @Override
-    public SalesAgentResponse findSalesAgentById(Long id) {
+    public SalesAgent findSalesAgentById(Long id) {
         SalesAgent salesAgent = salesAgentRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Sales Agent not exist with id :" + id));
 
-        return response(salesAgent);
+        return  salesAgent;
 
     }
 

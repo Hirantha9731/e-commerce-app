@@ -3,6 +3,7 @@ package com.example.mobileaccessoriesbackend.controller;
 import com.example.mobileaccessoriesbackend.dto.request.SalesAgentRequest;
 import com.example.mobileaccessoriesbackend.dto.response.SalesAgentResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
+import com.example.mobileaccessoriesbackend.entity.SalesAgent;
 import com.example.mobileaccessoriesbackend.services.interfaces.ISalesAgentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class SalesAgentController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getSalesAgentById(@PathVariable Long id){
 
-        SalesAgentResponse saleAgent = salesAgentService.findSalesAgentById(id);
+        SalesAgent saleAgent = salesAgentService.findSalesAgentById(id);
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,
                 "Sales agent fetch successful",

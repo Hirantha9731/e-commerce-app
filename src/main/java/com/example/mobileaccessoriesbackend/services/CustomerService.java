@@ -1,10 +1,7 @@
 package com.example.mobileaccessoriesbackend.services;
-
 import com.example.mobileaccessoriesbackend.dto.request.CustomerRequest;
 import com.example.mobileaccessoriesbackend.dto.response.CustomerResponse;
-import com.example.mobileaccessoriesbackend.dto.response.UserResponse;
 import com.example.mobileaccessoriesbackend.entity.Customer;
-import com.example.mobileaccessoriesbackend.entity.User;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
 import com.example.mobileaccessoriesbackend.repository.CustomerRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.ICustomerService;
@@ -20,6 +17,10 @@ public class CustomerService implements ICustomerService {
      * Customer Repository
      */
     private CustomerRepository customerRepository;
+
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     /**
      * Add Customer
@@ -69,8 +70,10 @@ public class CustomerService implements ICustomerService {
      */
     @Override
     public Customer getCustomerById(Long id) {
-        return  customerRepository.findById(id)
+        Customer customer = customerRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Customer not exist with id : "+ id));
+
+        return  customer;
     }
 
     /**

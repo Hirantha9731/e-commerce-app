@@ -1,5 +1,6 @@
 package com.example.mobileaccessoriesbackend.entity;
 
+import com.example.mobileaccessoriesbackend.enums.OrderStatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,41 +30,32 @@ public class Order {
     private String deliverAddress;
 
     @ManyToOne
-    @JoinColumn(name = "fk_customerId")
+    @JoinColumn(name = "customerId")
     private Customer customerId;
 
     @ManyToOne
-    @JoinColumn(name = "fk_branchId")
+    @JoinColumn(name = "branchId")
     private Branch branchId;
 
     @Column(name = "status")
-    private String status;
+    private OrderStatusType status;
 
     @ManyToOne
-    @JoinColumn(name = "fk_salesAgentId")
+    @JoinColumn(name = "salesAgentId")
     private SalesAgent salesAgentId;
 
     @Column(name = "saleAgentNote")
     private String saleAgentNote;
 
     @ManyToOne
-    @JoinColumn(name = "fk_vehicleId")
+    @JoinColumn(name = "vehicleId")
     private Vehicle vehicleId;
 
     @Column(name = "deliverDate")
     private Date deliverDate;
 
     @ManyToOne
-    @JoinColumn(name = "fk_paymentId")
+    @JoinColumn(name = "paymentId")
     private Payment paymentId;
-
-
-
-
-
-
-
-
-
 
 }

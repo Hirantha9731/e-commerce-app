@@ -3,6 +3,7 @@ package com.example.mobileaccessoriesbackend.services.interfaces;
 
 import com.example.mobileaccessoriesbackend.dto.request.SalesAgentRequest;
 import com.example.mobileaccessoriesbackend.dto.response.SalesAgentResponse;
+import com.example.mobileaccessoriesbackend.entity.SalesAgent;
 
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface ISalesAgentService {
 
     SalesAgentResponse createSalesAgent(SalesAgentRequest salesAgent);
 
-    SalesAgentResponse findSalesAgentById(Long id);
+    SalesAgent findSalesAgentById(Long id);
 
     SalesAgentResponse updateSalesAgent(SalesAgentRequest salesAgentRequest);
 
