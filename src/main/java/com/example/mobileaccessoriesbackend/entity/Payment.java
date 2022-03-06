@@ -1,6 +1,6 @@
 package com.example.mobileaccessoriesbackend.entity;
 
-import com.example.mobileaccessoriesbackend.entity.enums.PaymentType;
+import com.example.mobileaccessoriesbackend.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.mobileaccessoriesbackend.entity.enums;
+package com.example.mobileaccessoriesbackend.enums;
 
 public enum ProductStatusType {
     OUT_OF_STOCK,

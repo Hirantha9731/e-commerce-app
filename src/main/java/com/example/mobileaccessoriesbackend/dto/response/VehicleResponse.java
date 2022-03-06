@@ -1,6 +1,6 @@
 package com.example.mobileaccessoriesbackend.dto.response;
 
-import com.example.mobileaccessoriesbackend.entity.enums.VehicleStatusType;
+import com.example.mobileaccessoriesbackend.enums.VehicleStatusType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
