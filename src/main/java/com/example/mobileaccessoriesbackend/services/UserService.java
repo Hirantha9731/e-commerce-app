@@ -2,14 +2,27 @@ package com.example.mobileaccessoriesbackend.services;
 
 
 import com.example.mobileaccessoriesbackend.dto.request.UserRequest;
+import com.example.mobileaccessoriesbackend.dto.response.AuthResponse;
+import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
 import com.example.mobileaccessoriesbackend.dto.response.UserResponse;
 import com.example.mobileaccessoriesbackend.entity.Supplier;
 import com.example.mobileaccessoriesbackend.entity.User;
+import com.example.mobileaccessoriesbackend.enums.UserType;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
+import com.example.mobileaccessoriesbackend.jwt.AuthenticationRequest;
+import com.example.mobileaccessoriesbackend.jwt.JwtGenerator;
 import com.example.mobileaccessoriesbackend.repository.UserRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.IUserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -20,7 +33,13 @@ public class UserService implements IUserService {
      * User Repository
      */
     private UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * Add User
@@ -31,9 +50,11 @@ public class UserService implements IUserService {
     public UserResponse addUser(UserRequest userRequest) {
         User user = new User();
 
-        user.setId(userRequest.getId());
         user.setUsername(userRequest.getUsername());
+        user.setUserId(UUID.randomUUID().toString());
         user.setContactNumber(userRequest.getContactNumber());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setUserType(userRequest.getUserType());
         user.setEmail(userRequest.getEmail());
         user.setEmployeeId(userRequest.getEmployeeId());
 
@@ -42,8 +63,8 @@ public class UserService implements IUserService {
         return new UserResponse(
                 response.getId(),
                 response.getUsername(),
-                response.getContactNumber(),
                 response.getEmail(),
+                response.getContactNumber(),
                 response.getEmployeeId());
     }
 
@@ -123,6 +144,32 @@ public class UserService implements IUserService {
         return true;
     }
 
+    @Override
+    public ResponseEntity<?> signIn(AuthenticationRequest authenticationRequest) {
+        Optional<User> user = userRepository.findByUsername(authenticationRequest.getUsername());
+        if (user.isPresent() && passwordEncoder.matches(authenticationRequest.getPassword(), user.get().getPassword())) {
+            String accessToken = createAccessToken(user.get());
+            AuthResponse authResponse = new AuthResponse();
+            if (accessToken != null) {
+                authResponse.setToken(accessToken);
+                authResponse.setUserId(user.get().getUserId());
+                authResponse.setUserType(user.get().getUserType());
+                authResponse.setName(user.get().getUsername());
+            }
+            return ResponseEntity.ok().body(new StandardResponse(
+                            HttpStatus.OK,
+                            "Login successful",
+                            authResponse
+                    )
+            );
+        }
+        return ResponseEntity.badRequest().body(new StandardResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Login Failed",
+                new ArrayList<>()
+        ));
+    }
+
     /**
      * Helper method
      * @param user
@@ -136,5 +183,11 @@ public class UserService implements IUserService {
         response.setEmail(user.getEmail());
         response.setEmployeeId(user.getEmployeeId());
         return response;
+    }
+
+    public String createAccessToken(User user) {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType()));
+        return JwtGenerator.generateToken(user.getUsername(), user.getUserId(), authorities);
     }
 }

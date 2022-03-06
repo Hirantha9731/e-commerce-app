@@ -1,5 +1,6 @@
 package com.example.mobileaccessoriesbackend.dto.request;
 
+import com.example.mobileaccessoriesbackend.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,4 +14,6 @@ public class UserRequest {
     private String email;
     private String contactNumber;
     private Long employeeId;
+    private String password;
+    private UserType userType;
 }

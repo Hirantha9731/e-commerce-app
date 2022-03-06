@@ -1,5 +1,6 @@
 package com.example.mobileaccessoriesbackend.entity;
 
+import com.example.mobileaccessoriesbackend.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "userId")
+    private String userId;
+
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "email")
     private String email;
@@ -32,5 +39,8 @@ public class User {
     @Column(name = "employeeId")
     private Long employeeId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private UserType userType;
 
 }

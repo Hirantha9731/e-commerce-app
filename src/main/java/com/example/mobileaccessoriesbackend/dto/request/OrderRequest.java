@@ -25,4 +25,5 @@ public class OrderRequest {
     private Long vehicleId;
     private Date deliverDate;
     private Long paymentId;
+
 }
