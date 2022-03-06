@@ -9,7 +9,13 @@ import com.example.mobileaccessoriesbackend.repository.ProductRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.IProductService;
 import com.example.mobileaccessoriesbackend.services.interfaces.ISupplierService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,16 +54,15 @@ public class ProductService implements IProductService {
 
         product.setProductName(productRequest.getProductName());
         product.setSellingPrice(productRequest.getSellingPrice());
-        product.setImgUrl(productRequest.getImgUrl());
+        product.setImgUrl(uploadFile(productRequest.getImgUrl()));
         product.setSupplierId(supplierService.findSupplierById(productRequest.getSupplierId()));
-
         Product response = productRepository.save(product);
 
         return new ProductResponse(
                 response.getProductId(),
                 response.getProductName(),
                 response.getSellingPrice(),
-                response.getImgUrl(),
+                saveFile(response.getImgUrl()),
                 new SupplierResponse(
                         response.getSupplierId().getSupplierId(),
                         response.getSupplierId().getUsername(),
@@ -95,7 +100,7 @@ public class ProductService implements IProductService {
 
             product.setProductName(productRequest.getProductName());
             product.setSellingPrice(productRequest.getSellingPrice());
-            product.setImgUrl(productRequest.getImgUrl());
+            product.setImgUrl(uploadFile(productRequest.getImgUrl()));
             product.setSupplierId(supplierService.findSupplierById(productRequest.getSupplierId()));
 
             Product response = productRepository.save(product);
@@ -104,7 +109,7 @@ public class ProductService implements IProductService {
                     response.getProductId(),
                     response.getProductName(),
                     response.getSellingPrice(),
-                    response.getImgUrl(),
+                    saveFile(response.getImgUrl()),
                     new SupplierResponse(
                             response.getSupplierId().getSupplierId(),
                             response.getSupplierId().getUsername(),
@@ -136,6 +141,24 @@ public class ProductService implements IProductService {
     }
 
     /**
+     *
+     * @param file
+     * @throws IllegalStateException
+     */
+    @Override
+    public String uploadFile(MultipartFile file) throws IllegalStateException {
+        try{
+            file.transferTo(new File("E:\\SpringBoot-Projects\\Uploads\\" + file.getOriginalFilename()));
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+
+        return "E:\\SpringBoot-Projects\\Uploads\\" + file.getOriginalFilename();
+
+    }
+
+    /**
      * helper method
      * @param product
      * @return
@@ -146,7 +169,10 @@ public class ProductService implements IProductService {
         response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
         response.setSellingPrice(product.getSellingPrice());
-        response.setImgUrl(product.getImgUrl());
+
+        byte[] urls  = saveFile(product.getImgUrl());
+        response.setImgUrl(urls);
+
         response.setSupplierId(new SupplierResponse(
                 product.getSupplierId().getSupplierId(),
                 product.getSupplierId().getUsername(),
@@ -157,5 +183,28 @@ public class ProductService implements IProductService {
         ));
 
         return response;
+    }
+
+    /**
+     * File saving
+     * @param imgUrl
+     * @return
+     */
+    private byte[] saveFile(String imgUrl){
+        byte[] bytes = null;
+        try{
+
+            File file = new File(imgUrl);
+            if(file.exists()){
+                InputStream inputStream = new FileInputStream(file);
+                bytes = StreamUtils.copyToByteArray(inputStream);
+            }
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        return bytes;
     }
 }

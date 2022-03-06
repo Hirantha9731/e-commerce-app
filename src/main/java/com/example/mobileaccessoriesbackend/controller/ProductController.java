@@ -7,7 +7,6 @@ import com.example.mobileaccessoriesbackend.services.interfaces.IProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,6 +15,7 @@ import java.util.List;
 public class ProductController {
 
     private IProductService productService;
+
 
     public ProductController(IProductService productService) {
         this.productService = productService;
@@ -32,7 +32,7 @@ public class ProductController {
 
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody ProductRequest productRequest){
+    public ResponseEntity<?> save(ProductRequest productRequest){
 
         ProductResponse productResponse = productService.addProduct(productRequest);
         return ResponseEntity.ok().body(new StandardResponse(

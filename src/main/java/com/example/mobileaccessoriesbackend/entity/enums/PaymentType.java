@@ -1,4 +1,4 @@
-package com.example.mobileaccessoriesbackend.enums;
+package com.example.mobileaccessoriesbackend.entity.enums;
 
 public enum PaymentType {
 

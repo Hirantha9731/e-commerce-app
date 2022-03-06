@@ -2,9 +2,7 @@ package com.example.mobileaccessoriesbackend.controller;
 
 
 import com.example.mobileaccessoriesbackend.dto.request.OrderRequest;
-import com.example.mobileaccessoriesbackend.dto.request.ProductRequest;
 import com.example.mobileaccessoriesbackend.dto.response.OrderResponse;
-import com.example.mobileaccessoriesbackend.dto.response.ProductResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
 import com.example.mobileaccessoriesbackend.services.interfaces.IOrderService;
 import org.springframework.http.HttpStatus;
