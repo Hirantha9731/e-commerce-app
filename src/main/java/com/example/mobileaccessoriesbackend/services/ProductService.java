@@ -78,11 +78,11 @@ public class ProductService implements IProductService {
      * @return
      */
     @Override
-    public ProductResponse findProductById(Long id) {
+    public Product findProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Product not exist with id : "+id));
 
-        return response(product);
+        return product;
     }
 
     /**
@@ -163,7 +163,7 @@ public class ProductService implements IProductService {
      * @param product
      * @return
      */
-    public ProductResponse response(Product product){
+    private ProductResponse response(Product product){
         ProductResponse response = new ProductResponse();
 
         response.setProductId(product.getProductId());
@@ -190,7 +190,7 @@ public class ProductService implements IProductService {
      * @param imgUrl
      * @return
      */
-    private byte[] saveFile(String imgUrl){
+    public byte[] saveFile(String imgUrl){
         byte[] bytes = null;
         try{
 

@@ -4,6 +4,7 @@ package com.example.mobileaccessoriesbackend.controller;
 import com.example.mobileaccessoriesbackend.dto.request.OrderRequest;
 import com.example.mobileaccessoriesbackend.dto.response.OrderResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
+import com.example.mobileaccessoriesbackend.entity.Order;
 import com.example.mobileaccessoriesbackend.services.interfaces.IOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,37 @@ public class OrderController {
                 HttpStatus.CREATED,
                 "Order placed successfully",
                 orderResponse
+        ));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id){
+
+        Order order = orderService.findOrderById(id);
+        return ResponseEntity.ok().body(new StandardResponse(
+                HttpStatus.OK,
+                "Order fetch successful",
+                order
+        ));
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateProductDetails(@RequestBody OrderRequest productRequest){
+        OrderResponse orderResponse = orderService.updateOrderDetails(productRequest);
+        return ResponseEntity.ok().body(new StandardResponse(
+                HttpStatus.OK,
+                "Order details updated successfully",
+                orderResponse
+        ));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id){
+        boolean response  = orderService.deleteOrder(id);
+        return ResponseEntity.ok().body(new StandardResponse(
+                HttpStatus.OK,
+                "Order deleted successfully",
+                response
         ));
     }
 

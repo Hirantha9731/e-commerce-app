@@ -3,6 +3,7 @@ package com.example.mobileaccessoriesbackend.controller;
 import com.example.mobileaccessoriesbackend.dto.request.ProductRequest;
 import com.example.mobileaccessoriesbackend.dto.response.ProductResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
+import com.example.mobileaccessoriesbackend.entity.Product;
 import com.example.mobileaccessoriesbackend.services.interfaces.IProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductById(@PathVariable Long id){
 
-        ProductResponse productResponse = productService.findProductById(id);
+        Product productResponse = productService.findProductById(id);
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,
                 "Product fetch successful",

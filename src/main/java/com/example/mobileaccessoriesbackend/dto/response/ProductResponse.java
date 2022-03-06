@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductResponse {
 
-    private long productId;
+    private Long productId;
     private String productName;
     private Double sellingPrice;
     private byte[] imgUrl;
