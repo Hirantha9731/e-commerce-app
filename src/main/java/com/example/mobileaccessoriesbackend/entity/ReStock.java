@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "restock_request")
-public class ReStockRequest {
+public class ReStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
