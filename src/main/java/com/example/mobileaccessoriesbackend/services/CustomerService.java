@@ -1,10 +1,14 @@
 package com.example.mobileaccessoriesbackend.services;
 import com.example.mobileaccessoriesbackend.dto.request.CustomerRequest;
+import com.example.mobileaccessoriesbackend.dto.request.UserRequest;
 import com.example.mobileaccessoriesbackend.dto.response.CustomerResponse;
 import com.example.mobileaccessoriesbackend.entity.Customer;
+import com.example.mobileaccessoriesbackend.enums.UserType;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
 import com.example.mobileaccessoriesbackend.repository.CustomerRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.ICustomerService;
+import com.example.mobileaccessoriesbackend.services.interfaces.IUserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +20,16 @@ public class CustomerService implements ICustomerService {
     /**
      * Customer Repository
      */
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+    private final IUserService userService;
+    private final ModelMapper modelMapper;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository,
+                           IUserService userService,
+                           ModelMapper modelMapper) {
         this.customerRepository = customerRepository;
+        this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     /**
@@ -30,27 +40,19 @@ public class CustomerService implements ICustomerService {
     @Override
     public CustomerResponse addCustomer(CustomerRequest customerRequest) {
 
-        Customer customer = new Customer();
+        Customer customer = modelMapper.map(customerRequest, Customer.class);
 
-        customer.setId(customerRequest.getId());
-        customer.setUsername(customerRequest.getUsername());
-        customer.setName(customerRequest.getName());
-        customer.setEmail(customerRequest.getEmail());
-        customer.setContactNo(customerRequest.getContactNo());
-        customer.setAddress(customerRequest.getAddress());
-        customer.setCity(customerRequest.getCity());
-
-        Customer response = customerRepository.save(customer);
-
-        return new CustomerResponse(
-                response.getId(),
-                response.getUsername(),
-                response.getName(),
-                response.getEmail(),
-                response.getContactNo(),
-                response.getAddress(),
-                response.getCity()
-        );
+        Customer save = customerRepository.save(customer);
+        if (save.getId() != null) {
+            UserRequest userRequest = new UserRequest();
+            userRequest.setUsername(customerRequest.getUsername());
+            userRequest.setEmail(customerRequest.getEmail());
+            userRequest.setUserType(UserType.CUSTOMER);
+            userRequest.setContactNumber(customerRequest.getContactNo());
+            userRequest.setPassword(customerRequest.getPassword());
+            userService.addUser(userRequest);
+        }
+        return modelMapper.map(save, CustomerResponse.class);
     }
 
     /**

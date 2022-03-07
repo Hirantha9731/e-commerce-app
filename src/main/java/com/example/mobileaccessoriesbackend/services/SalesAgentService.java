@@ -1,13 +1,17 @@
 package com.example.mobileaccessoriesbackend.services;
 
 import com.example.mobileaccessoriesbackend.dto.request.SalesAgentRequest;
+import com.example.mobileaccessoriesbackend.dto.request.UserRequest;
 import com.example.mobileaccessoriesbackend.dto.response.BranchResponse;
 import com.example.mobileaccessoriesbackend.dto.response.SalesAgentResponse;
 import com.example.mobileaccessoriesbackend.entity.SalesAgent;
+import com.example.mobileaccessoriesbackend.enums.UserType;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
 import com.example.mobileaccessoriesbackend.repository.SalesAgentRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.IBranchService;
 import com.example.mobileaccessoriesbackend.services.interfaces.ISalesAgentService;
+import com.example.mobileaccessoriesbackend.services.interfaces.IUserService;
+import org.modelmapper.ModelMapper;
 
 import org.springframework.stereotype.Service;
 
@@ -21,11 +25,17 @@ public class SalesAgentService implements ISalesAgentService {
 
     private final SalesAgentRepository salesAgentRepository;
     private final IBranchService branchService;
+    private final IUserService userService;
+    private final ModelMapper modelMapper;
 
     public SalesAgentService(SalesAgentRepository salesAgentRepository,
-                             IBranchService branchService) {
+                             IBranchService branchService,
+                             IUserService userService,
+                             ModelMapper modelMapper) {
         this.salesAgentRepository = salesAgentRepository;
         this.branchService = branchService;
+        this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     /**
@@ -36,7 +46,6 @@ public class SalesAgentService implements ISalesAgentService {
     public List<SalesAgentResponse> getAllSalesAgents() {
         List<SalesAgent> agents = salesAgentRepository.findAll();
         return agents.stream().map(this::response).collect(Collectors.toList());
-
     }
 
     /**
@@ -46,26 +55,20 @@ public class SalesAgentService implements ISalesAgentService {
      */
     @Override
     public SalesAgentResponse createSalesAgent(SalesAgentRequest salesAgentRequest) {
-        SalesAgent salesAgent1 = new SalesAgent();
+        SalesAgent salesAgent = modelMapper.map(salesAgentRequest, SalesAgent.class);
+        salesAgent.setBranchId(branchService.findById(salesAgentRequest.getBranchId()));
 
-        salesAgent1.setName(salesAgentRequest.getName());
-        salesAgent1.setUsername(salesAgentRequest.getUsername());
-        salesAgent1.setContactNo(salesAgentRequest.getContactNo());
-        salesAgent1.setBranchId(branchService.findById(salesAgentRequest.getBranchId()));
+        SalesAgent save = salesAgentRepository.save(salesAgent);
 
-        SalesAgent response = salesAgentRepository.save(salesAgent1);
-
-
-        return new SalesAgentResponse(
-                response.getId(),
-                response.getName(),
-                response.getUsername(),
-                response.getContactNo(),
-                new BranchResponse(
-                        response.getBranchId().getId(),
-                        response.getBranchId().getBranchName() ,
-                        response.getBranchId().getBranchLocation()));
-
+        if (save.getId() != null) {
+            UserRequest userRequest = new UserRequest();
+            userRequest.setUsername(salesAgentRequest.getUsername());
+            userRequest.setUserType(UserType.SALES_AGENT);
+            userRequest.setContactNumber(salesAgentRequest.getContactNo());
+            userRequest.setPassword(salesAgentRequest.getPassword());
+            userService.addUser(userRequest);
+        }
+        return modelMapper.map(save, SalesAgentResponse.class);
     }
 
 

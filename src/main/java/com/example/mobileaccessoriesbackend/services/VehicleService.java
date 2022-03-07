@@ -18,9 +18,7 @@ public class VehicleService implements IVehicleService {
 
     @Override
     public Vehicle findVehicleById(Long id) {
-        Vehicle vehicle =vehicleRepository.findById(id)
+        return vehicleRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Vehicle not exist with id : "+id));
-
-        return vehicle;
     }
 }

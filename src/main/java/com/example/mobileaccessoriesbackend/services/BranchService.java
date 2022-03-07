@@ -30,6 +30,11 @@ public class BranchService implements IBranchService {
         return branches.stream().map(this::response).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Branch> allBranches() {
+        return branchRepository.findAll();
+    }
+
 
     @Override
     public Branch findById(Long id) {

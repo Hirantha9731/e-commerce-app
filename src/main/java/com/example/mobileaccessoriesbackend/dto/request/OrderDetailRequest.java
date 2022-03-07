@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class OrderDetailRequest {
 
-    private Long id;
-    private Long orderId;
     private Long productId;
     private int productQt;
 }

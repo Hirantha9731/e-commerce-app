@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,15 +15,16 @@ import java.util.Date;
 public class OrderResponse {
 
     private Long id;
-    private Date orderDate;
+    private LocalDate orderDate;
     private String description;
     private String deliverAddress;
-    private CustomerResponse customerId;
-    private BranchResponse branchId;
+    private CustomerResponse customer;
+    private BranchResponse branch;
     private OrderStatusType status;
-    private SalesAgentResponse salesAgentId;
+    private SalesAgentResponse salesAgent;
     private String saleAgentNote;
-    private VehicleResponse vehicleId;
+    private VehicleResponse vehicle;
     private Date deliverDate;
-    private PaymentResponse paymentId;
+    private PaymentResponse payment;
+    private List<OrderDetailResponse> orderDetailResponse;
 }

@@ -32,7 +32,7 @@ public class UserService implements IUserService {
     /**
      * User Repository
      */
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
@@ -56,7 +56,6 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setUserType(userRequest.getUserType());
         user.setEmail(userRequest.getEmail());
-        user.setEmployeeId(userRequest.getEmployeeId());
 
         User response = userRepository.save(user);
 
@@ -107,7 +106,6 @@ public class UserService implements IUserService {
             user.setUsername(userRequest.getUsername());
             user.setContactNumber(userRequest.getContactNumber());
             user.setEmail(userRequest.getEmail());
-            user.setEmployeeId(userRequest.getEmployeeId());
 
             User response = userRepository.save(user);
 

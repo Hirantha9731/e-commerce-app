@@ -4,8 +4,10 @@ import com.example.mobileaccessoriesbackend.dto.request.ProductRequest;
 import com.example.mobileaccessoriesbackend.dto.response.ProductResponse;
 import com.example.mobileaccessoriesbackend.dto.response.SupplierResponse;
 import com.example.mobileaccessoriesbackend.entity.Product;
+import com.example.mobileaccessoriesbackend.exceptions.InvalidArgumentException;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
 import com.example.mobileaccessoriesbackend.repository.ProductRepository;
+import com.example.mobileaccessoriesbackend.services.interfaces.IBranchStockService;
 import com.example.mobileaccessoriesbackend.services.interfaces.IProductService;
 import com.example.mobileaccessoriesbackend.services.interfaces.ISupplierService;
 import org.springframework.stereotype.Service;
@@ -22,15 +24,18 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService implements IProductService {
 
-    private ProductRepository productRepository;
-    private ISupplierService supplierService;
+    private final ProductRepository productRepository;
+    private final ISupplierService supplierService;
+    private final IBranchStockService branchStockService;
 
     public ProductService(
             ProductRepository productRepository,
-            ISupplierService supplierService)
+            ISupplierService supplierService,
+            IBranchStockService branchStockService)
     {
         this.productRepository = productRepository;
         this.supplierService = supplierService;
+        this.branchStockService = branchStockService;
     }
 
     /**
@@ -58,9 +63,13 @@ public class ProductService implements IProductService {
         product.setSupplierId(supplierService.findSupplierById(productRequest.getSupplierId()));
         Product response = productRepository.save(product);
 
+        branchStockService.addQtyToAll(response);
+
+
         return new ProductResponse(
                 response.getProductId(),
                 response.getProductName(),
+                response.getDescription(),
                 response.getSellingPrice(),
                 saveFile(response.getImgUrl()),
                 new SupplierResponse(
@@ -79,10 +88,9 @@ public class ProductService implements IProductService {
      */
     @Override
     public Product findProductById(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Product not exist with id : "+id));
 
-        return product;
+        return productRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Product not exist with id : "+id));
     }
 
     /**
@@ -108,6 +116,7 @@ public class ProductService implements IProductService {
             return new ProductResponse(
                     response.getProductId(),
                     response.getProductName(),
+                    response.getDescription(),
                     response.getSellingPrice(),
                     saveFile(response.getImgUrl()),
                     new SupplierResponse(
@@ -206,5 +215,14 @@ public class ProductService implements IProductService {
 
         }
         return bytes;
+    }
+
+    @Override
+    public List<ProductResponse> search(String keyword) {
+        if (keyword == null){
+            throw new InvalidArgumentException("keyword not found");
+        }
+        List<Product> productList = productRepository.search(keyword);
+        return productList.stream().map(this::response).collect(Collectors.toList());
     }
 }

@@ -1,25 +1,40 @@
 package com.example.mobileaccessoriesbackend.services;
 
+import com.example.mobileaccessoriesbackend.dto.request.OrderConfirmRequest;
+import com.example.mobileaccessoriesbackend.dto.request.OrderDetailRequest;
 import com.example.mobileaccessoriesbackend.dto.request.OrderRequest;
-import com.example.mobileaccessoriesbackend.dto.response.*;
-import com.example.mobileaccessoriesbackend.entity.Order;
+import com.example.mobileaccessoriesbackend.dto.response.OrderDetailResponse;
+import com.example.mobileaccessoriesbackend.dto.response.OrderResponse;
+import com.example.mobileaccessoriesbackend.entity.*;
+import com.example.mobileaccessoriesbackend.enums.OrderStatusType;
+import com.example.mobileaccessoriesbackend.exceptions.InvalidArgumentException;
 import com.example.mobileaccessoriesbackend.exceptions.ResourceNotFoundException;
+import com.example.mobileaccessoriesbackend.repository.OrderDetailRepository;
 import com.example.mobileaccessoriesbackend.repository.OrderRepository;
+import com.example.mobileaccessoriesbackend.repository.PaymentRepository;
 import com.example.mobileaccessoriesbackend.services.interfaces.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService implements IOrderService {
 
-    private OrderRepository orderRepository;
-    private ICustomerService customerService;
-    private IBranchService branchService;
-    private ISalesAgentService salesAgentService;
-    private IVehicleService vehicleService;
-    private IPaymentService paymentService;
+    private final OrderRepository orderRepository;
+    private final ICustomerService customerService;
+    private final IBranchService branchService;
+    private final ISalesAgentService salesAgentService;
+    private final IVehicleService vehicleService;
+    private final IPaymentService paymentService;
+    private final IProductService productService;
+    private final OrderDetailRepository orderDetailRepository;
+    private final PaymentRepository paymentRepository;
+    private final ModelMapper modelMapper;
+    private final IDriverService driverService;
 
     public OrderService(
             OrderRepository orderRepository,
@@ -27,7 +42,12 @@ public class OrderService implements IOrderService {
             IBranchService branchService,
             ISalesAgentService salesAgentService,
             IVehicleService vehicleService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IProductService productService,
+            OrderDetailRepository orderDetailRepository,
+            PaymentRepository paymentRepository,
+            ModelMapper modelMapper,
+            IDriverService driverService)
     {
         this.orderRepository = orderRepository;
         this.customerService = customerService;
@@ -35,6 +55,11 @@ public class OrderService implements IOrderService {
         this.salesAgentService = salesAgentService;
         this.vehicleService = vehicleService;
         this.paymentService = paymentService;
+        this.productService = productService;
+        this.orderDetailRepository = orderDetailRepository;
+        this.paymentRepository = paymentRepository;
+        this.modelMapper = modelMapper;
+        this.driverService = driverService;
     }
 
     /**
@@ -53,26 +78,41 @@ public class OrderService implements IOrderService {
      * @return
      */
     @Override
-    public OrderResponse createOrder(OrderRequest orderRequest) {
+    public Long createOrder(OrderRequest orderRequest) {
         Order order = new Order();
 
-        order.setId(orderRequest.getId());
-        order.setOrderDate(orderRequest.getOrderDate());
+        order.setOrderDate(LocalDate.now());
         order.setDescription(orderRequest.getDescription());
         order.setDeliverAddress(orderRequest.getDeliverAddress());
-        order.setCustomerId(customerService.getCustomerById(orderRequest.getCustomerId()));
-        order.setBranchId(branchService.findById(orderRequest.getBranchId()));
-        order.setStatus(orderRequest.getStatus());
-        order.setSalesAgentId(salesAgentService.findSalesAgentById(orderRequest.getSalesAgentId()));
-        order.setSaleAgentNote(orderRequest.getSaleAgentNote());
-        order.setVehicleId(vehicleService.findVehicleById(orderRequest.getVehicleId()));
-        order.setDeliverDate(orderRequest.getDeliverDate());
-        order.setPaymentId(paymentService.findPaymentById(orderRequest.getPaymentId()));
+        order.setCustomer(customerService.getCustomerById(orderRequest.getCustomerId()));
+        order.setBranch(branchService.findById(orderRequest.getBranchId()));
+        order.setStatus(OrderStatusType.PENDING);
 
-        // saving order
-        Order response = orderRepository.save(order);
+        Order save = orderRepository.save(order);
 
-        return response(response);
+        double totalPrice= 0;
+
+        for (OrderDetailRequest request :
+                orderRequest.getRequestList()) {
+            OrderDetail orderDetail = new OrderDetail();
+            Product product = productService.findProductById(request.getProductId());
+            orderDetail.setOrder(save);
+            orderDetail.setProduct(product);
+            orderDetail.setProductQt(request.getProductQt());
+
+            totalPrice += product.getSellingPrice();
+
+            orderDetailRepository.save(orderDetail);
+        }
+
+        Payment payment = new Payment();
+        payment.setDate(LocalDate.now());
+        payment.setTotal(totalPrice);
+        payment.setPaymentType(orderRequest.getPaymentType());
+
+        paymentRepository.save(payment);
+
+        return save.getId();
     }
 
     /**
@@ -82,10 +122,8 @@ public class OrderService implements IOrderService {
      */
     @Override
     public Order findOrderById(Long id) {
-        Order order = orderRepository.findById(id)
+        return orderRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Order not exist with id : "+id));
-
-        return order;
     }
 
     /**
@@ -105,35 +143,7 @@ public class OrderService implements IOrderService {
      */
     @Override
     public OrderResponse updateOrderDetails(OrderRequest orderRequest) {
-        if(orderRequest.getId() != null){
-            this.findOrderById(orderRequest.getId());
-
-            Order order = orderRepository.findById(orderRequest.getId())
-                    .orElseThrow(()-> new ResourceNotFoundException("Order not exist with id : "+ orderRequest.getId()));
-
-            // setting details
-            order.setId(orderRequest.getId());
-            order.setOrderDate(orderRequest.getOrderDate());
-            order.setDescription(orderRequest.getDescription());
-            order.setDeliverAddress(orderRequest.getDeliverAddress());
-            order.setCustomerId(customerService.getCustomerById(orderRequest.getCustomerId()));
-            order.setBranchId(branchService.findById(orderRequest.getBranchId()));
-            order.setStatus(orderRequest.getStatus());
-            order.setSalesAgentId(salesAgentService.findSalesAgentById(orderRequest.getSalesAgentId()));
-            order.setSaleAgentNote(orderRequest.getSaleAgentNote());
-            order.setVehicleId(vehicleService.findVehicleById(orderRequest.getVehicleId()));
-            order.setDeliverDate(orderRequest.getDeliverDate());
-            order.setPaymentId(paymentService.findPaymentById(orderRequest.getPaymentId()));
-
-
-            // saving order details
-            Order response = orderRepository.save(order);
-
-            return response(response);
-        }
-        else {
-            throw new ResourceNotFoundException("Order Details not found");
-        }
+        return null;
     }
 
     /**
@@ -154,60 +164,47 @@ public class OrderService implements IOrderService {
         return true;
     }
 
+    @Override
+    public List<OrderResponse> findByStatus(OrderStatusType statusType) {
+        List<Order> orders = orderRepository.findByStatus(statusType);
+        return orders.stream().map(this::response).collect(Collectors.toList());
+    }
+
+    @Override
+    public void confirmOrder(OrderConfirmRequest orderConfirmRequest) {
+        if (orderConfirmRequest == null)
+            throw new InvalidArgumentException("Confirmation request not found");
+
+        Order order = findOrderById(orderConfirmRequest.getOrderId());
+        order.setSalesAgent(salesAgentService.findSalesAgentById(orderConfirmRequest.getSalesAgentId()));
+        order.setSaleAgentNote(orderConfirmRequest.getSaleAgentNote());
+        order.setDriver(driverService.findById(orderConfirmRequest.getDriverId()));
+        order.setVehicle(vehicleService.findVehicleById(orderConfirmRequest.getVehicleId()));
+        order.setDeliverDate(LocalDate.now());
+    }
+
 
     /**
      * helper method
      * @param order
      * @return
      */
-    public OrderResponse response(Order order) throws ArrayIndexOutOfBoundsException{
-        OrderResponse response = new OrderResponse();
+    public OrderResponse response(Order order){
+        OrderResponse orderResponse = modelMapper.map(order, OrderResponse.class);
 
-        response.setId(order.getId());
-        response.setOrderDate(order.getOrderDate());
-        response.setDescription(order.getDescription());
-        response.setDeliverAddress(order.getDeliverAddress());
-        response.setCustomerId(new CustomerResponse(
-                order.getCustomerId().getId(),
-                order.getCustomerId().getName(),
-                order.getCustomerId().getUsername(),
-                order.getCustomerId().getEmail(),
-                order.getCustomerId().getContactNo(),
-                order.getCustomerId().getAddress(),
-                order.getCustomerId().getCity()
-        ));
+        List<OrderDetailResponse> responseList = new ArrayList<>();
+        order.getOrderDetails().forEach(orderDetail -> {
+            OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
+            orderDetailResponse.setProductId(orderDetail.getProduct().getProductId());
+            orderDetailResponse.setProductName(orderDetail.getProduct().getProductName());
+            orderDetailResponse.setDescription(orderDetail.getProduct().getDescription());
+            orderDetailResponse.setSellingPrice(orderDetail.getProduct().getSellingPrice());
+            orderDetailResponse.setImgUrl(productService.saveFile(orderDetail.getProduct().getImgUrl()));
+            orderDetailResponse.setQty(orderDetail.getProductQt());
 
-        response.setBranchId(new BranchResponse(
-              order.getBranchId().getId(),
-              order.getBranchId().getBranchName(),
-              order.getBranchId().getBranchLocation()
-        ));
-
-        response.setStatus(order.getStatus());
-
-        SalesAgentResponse salesAgentResponse = new SalesAgentResponse();
-        salesAgentResponse.setId(order.getSalesAgentId().getId());
-        salesAgentResponse.setName(order.getSalesAgentId().getName());
-        salesAgentResponse.setUsername(order.getSalesAgentId().getUsername());
-        salesAgentResponse.setContactNo(order.getSalesAgentId().getContactNo());
-
-        response.setSalesAgentId(salesAgentResponse);
-
-
-        response.setSaleAgentNote(order.getSaleAgentNote());
-        response.setVehicleId(new VehicleResponse(
-                order.getVehicleId().getId(),
-                order.getVehicleId().getVehicleType(),
-                order.getVehicleId().getVehicleNumber(),
-                order.getVehicleId().getVehicleStatus()
-        ));
-        response.setDeliverDate(order.getDeliverDate());
-        response.setPaymentId(new PaymentResponse(
-                order.getPaymentId().getId(),
-                order.getPaymentId().getPaymentType(),
-                order.getPaymentId().getPaymentDate()
-        ));
-
-        return response;
+            responseList.add(orderDetailResponse);
+        });
+        orderResponse.setOrderDetailResponse(responseList);
+        return orderResponse;
     }
 }

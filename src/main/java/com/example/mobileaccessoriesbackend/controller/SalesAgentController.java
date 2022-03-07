@@ -17,7 +17,7 @@ import java.util.List;
 @CrossOrigin
 public class SalesAgentController {
 
-    private ISalesAgentService salesAgentService;
+    private final ISalesAgentService salesAgentService;
 
     public SalesAgentController(ISalesAgentService salesAgentService) {
         this.salesAgentService = salesAgentService;

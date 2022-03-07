@@ -1,10 +1,12 @@
 package com.example.mobileaccessoriesbackend.controller;
 
 
+import com.example.mobileaccessoriesbackend.dto.request.OrderConfirmRequest;
 import com.example.mobileaccessoriesbackend.dto.request.OrderRequest;
 import com.example.mobileaccessoriesbackend.dto.response.OrderResponse;
 import com.example.mobileaccessoriesbackend.dto.response.StandardResponse;
 import com.example.mobileaccessoriesbackend.entity.Order;
+import com.example.mobileaccessoriesbackend.enums.OrderStatusType;
 import com.example.mobileaccessoriesbackend.services.interfaces.IOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.List;
 @CrossOrigin
 public class OrderController {
 
-    private IOrderService orderService;
+    private final IOrderService orderService;
 
     public OrderController(IOrderService orderService) {
         this.orderService = orderService;
@@ -35,7 +37,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody OrderRequest orderRequest){
 
-        OrderResponse orderResponse = orderService.createOrder(orderRequest);
+        Long orderResponse = orderService.createOrder(orderRequest);
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.CREATED,
                 "Order placed successfully",
@@ -71,6 +73,27 @@ public class OrderController {
                 HttpStatus.OK,
                 "Order deleted successfully",
                 response
+        ));
+    }
+
+    @GetMapping("/{status}")
+    public ResponseEntity<?> findByStatus(@PathVariable OrderStatusType status){
+
+        List<OrderResponse> orders = orderService.findByStatus(status);
+        return ResponseEntity.ok().body(new StandardResponse(
+                HttpStatus.OK,
+                "Order fetch successful",
+                orders
+        ));
+    }
+
+    @PutMapping("/confirm")
+    public ResponseEntity<?> confirmOrder(@RequestBody OrderConfirmRequest orderConfirmRequest){
+        orderService.confirmOrder(orderConfirmRequest);
+        return ResponseEntity.ok().body(new StandardResponse(
+                HttpStatus.OK,
+                "Order confirm successfully",
+                true
         ));
     }
 

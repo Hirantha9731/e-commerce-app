@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 public class OrderDetailResponse {
 
-    private Long id;
-    private OrderResponse orderId;
-    private ProductResponse productId;
-    private int productQt;
+    private Long productId;
+    private String productName;
+    private String description;
+    private Double sellingPrice;
+    private byte[] imgUrl;
+    private int qty;
 }

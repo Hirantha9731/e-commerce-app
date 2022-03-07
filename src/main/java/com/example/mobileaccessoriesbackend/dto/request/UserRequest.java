@@ -13,7 +13,6 @@ public class UserRequest {
     private String username;
     private String email;
     private String contactNumber;
-    private Long employeeId;
     private String password;
     private UserType userType;
 }

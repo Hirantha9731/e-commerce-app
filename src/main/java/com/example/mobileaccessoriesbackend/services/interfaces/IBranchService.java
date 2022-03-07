@@ -10,6 +10,8 @@ public interface IBranchService {
 
     List<BranchResponse> getAllBranches();
 
+    List<Branch> allBranches();
+
     Branch findById(Long id);
 
 

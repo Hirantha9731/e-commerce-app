@@ -13,6 +13,7 @@ public class ProductRequest {
 
     private Long productId;
     private String productName;
+    private String description;
     private Double sellingPrice;
     private MultipartFile imgUrl;
     private Long supplierId;

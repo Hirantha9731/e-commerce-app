@@ -24,4 +24,6 @@ public interface IProductService {
     String uploadFile(MultipartFile file);
 
     byte[] saveFile(String imgUrl);
+
+    List<ProductResponse> search(String keyword);
 }

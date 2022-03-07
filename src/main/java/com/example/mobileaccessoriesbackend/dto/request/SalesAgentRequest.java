@@ -12,6 +12,7 @@ public class SalesAgentRequest {
     private Long id;
     private String name;
     private String username;
+    private String password;
     private String contactNo;
     private Long branchId;
 }

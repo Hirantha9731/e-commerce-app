@@ -9,21 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/branch")
-@CrossOrigin
 public class BranchController {
 
-    private IBranchService branchService;
+    private final IBranchService branchService;
 
     public BranchController(IBranchService branchService) {
         this.branchService = branchService;
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAll(Principal principal){
         List<BranchResponse> productsList = branchService.getAllBranches();
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,
@@ -37,7 +37,7 @@ public class BranchController {
         Branch branch = branchService.findById(id);
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,
-                "Branch fetch successfull",
+                "Branch fetch successful",
                 branch
         ));
     }

@@ -11,6 +11,7 @@ public class ProductResponse {
 
     private Long productId;
     private String productName;
+    private String description;
     private Double sellingPrice;
     private byte[] imgUrl;
     private SupplierResponse supplierId;

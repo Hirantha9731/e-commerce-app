@@ -22,11 +22,11 @@ public class BranchStock {
 
     @ManyToOne
     @JoinColumn(name = "fk_productId")
-    private Product productId;
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "fk_branchId")
-    private Branch branchId;
+    private Branch branch;
 
     @Column(name = "availableQt")
     private int availableQt;

@@ -22,6 +22,9 @@ public class Product {
     @Column(name = "productName")
     private String productName;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "sellingPrice")
     private Double sellingPrice;
 
