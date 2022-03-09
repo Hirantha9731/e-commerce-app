@@ -168,6 +168,11 @@ public class UserService implements IUserService {
         ));
     }
 
+    @Override
+    public User findUserById(String id) {
+        return userRepository.findByUserId(id);
+    }
+
     /**
      * Helper method
      * @param user

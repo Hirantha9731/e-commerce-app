@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class OrderDetailRequest {
 
     private Long productId;
-    private int productQt;
+    private int qty;
 }

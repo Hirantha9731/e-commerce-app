@@ -58,9 +58,10 @@ public class ProductService implements IProductService {
         Product product = new Product();
 
         product.setProductName(productRequest.getProductName());
-        product.setSellingPrice(productRequest.getSellingPrice());
+        product.setSellingPrice(Double.parseDouble(productRequest.getSellingPrice()));
+        product.setDescription(productRequest.getDescription());
         product.setImgUrl(uploadFile(productRequest.getImgUrl()));
-        product.setSupplierId(supplierService.findSupplierById(productRequest.getSupplierId()));
+        product.setSupplierId(supplierService.findSupplierById(Long.parseLong(productRequest.getSupplierId())));
         Product response = productRepository.save(product);
 
         branchStockService.addQtyToAll(response);
@@ -101,15 +102,15 @@ public class ProductService implements IProductService {
     @Override
     public ProductResponse updateProductDetails(ProductRequest productRequest) {
         if(productRequest.getProductId() != null){
-            this.findProductById(productRequest.getProductId());
+            this.findProductById(Long.parseLong(productRequest.getProductId()));
 
-            Product product = productRepository.findById(productRequest.getProductId())
+            Product product = productRepository.findById(Long.parseLong(productRequest.getProductId()))
                     .orElseThrow(()-> new ResourceNotFoundException("Product not exist with id :" + productRequest.getProductId()));
 
             product.setProductName(productRequest.getProductName());
-            product.setSellingPrice(productRequest.getSellingPrice());
+            product.setSellingPrice(Double.parseDouble(productRequest.getSellingPrice()));
             product.setImgUrl(uploadFile(productRequest.getImgUrl()));
-            product.setSupplierId(supplierService.findSupplierById(productRequest.getSupplierId()));
+            product.setSupplierId(supplierService.findSupplierById(Long.parseLong(productRequest.getSupplierId())));
 
             Product response = productRepository.save(product);
 
@@ -157,13 +158,13 @@ public class ProductService implements IProductService {
     @Override
     public String uploadFile(MultipartFile file) throws IllegalStateException {
         try{
-            file.transferTo(new File("E:\\SpringBoot-Projects\\Uploads\\" + file.getOriginalFilename()));
+            file.transferTo(new File("F:\\Uploads\\" + file.getOriginalFilename()));
         }
         catch (IOException ex){
             ex.printStackTrace();
         }
 
-        return "E:\\SpringBoot-Projects\\Uploads\\" + file.getOriginalFilename();
+        return "F:\\Uploads\\" + file.getOriginalFilename();
 
     }
 
@@ -177,6 +178,7 @@ public class ProductService implements IProductService {
 
         response.setProductId(product.getProductId());
         response.setProductName(product.getProductName());
+        response.setDescription(product.getDescription());
         response.setSellingPrice(product.getSellingPrice());
 
         byte[] urls  = saveFile(product.getImgUrl());

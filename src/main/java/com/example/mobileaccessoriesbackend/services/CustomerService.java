@@ -134,6 +134,11 @@ public class CustomerService implements ICustomerService {
         return true;
     }
 
+    @Override
+    public Customer findByUserName(String username) {
+        return customerRepository.findByUsername(username);
+    }
+
     /**
      * Helper method
      * @param customer

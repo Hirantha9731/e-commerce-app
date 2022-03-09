@@ -23,7 +23,7 @@ public class BranchController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(Principal principal){
+    public ResponseEntity<?> getAll(){
         List<BranchResponse> productsList = branchService.getAllBranches();
         return ResponseEntity.ok().body(new StandardResponse(
                 HttpStatus.OK,

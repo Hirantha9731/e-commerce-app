@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SalesAgentRepository extends JpaRepository<SalesAgent, Long> {
 
+    SalesAgent findByUsername(String username);
+
 }

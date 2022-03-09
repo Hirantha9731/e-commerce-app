@@ -3,6 +3,7 @@ package com.example.mobileaccessoriesbackend.services;
 import com.example.mobileaccessoriesbackend.dto.request.OrderConfirmRequest;
 import com.example.mobileaccessoriesbackend.dto.request.OrderDetailRequest;
 import com.example.mobileaccessoriesbackend.dto.request.OrderRequest;
+import com.example.mobileaccessoriesbackend.dto.response.CustomerResponse;
 import com.example.mobileaccessoriesbackend.dto.response.OrderDetailResponse;
 import com.example.mobileaccessoriesbackend.dto.response.OrderResponse;
 import com.example.mobileaccessoriesbackend.entity.*;
@@ -29,7 +30,6 @@ public class OrderService implements IOrderService {
     private final IBranchService branchService;
     private final ISalesAgentService salesAgentService;
     private final IVehicleService vehicleService;
-    private final IPaymentService paymentService;
     private final IProductService productService;
     private final OrderDetailRepository orderDetailRepository;
     private final PaymentRepository paymentRepository;
@@ -42,7 +42,6 @@ public class OrderService implements IOrderService {
             IBranchService branchService,
             ISalesAgentService salesAgentService,
             IVehicleService vehicleService,
-            IPaymentService paymentService,
             IProductService productService,
             OrderDetailRepository orderDetailRepository,
             PaymentRepository paymentRepository,
@@ -54,7 +53,6 @@ public class OrderService implements IOrderService {
         this.branchService = branchService;
         this.salesAgentService = salesAgentService;
         this.vehicleService = vehicleService;
-        this.paymentService = paymentService;
         this.productService = productService;
         this.orderDetailRepository = orderDetailRepository;
         this.paymentRepository = paymentRepository;
@@ -84,7 +82,7 @@ public class OrderService implements IOrderService {
         order.setOrderDate(LocalDate.now());
         order.setDescription(orderRequest.getDescription());
         order.setDeliverAddress(orderRequest.getDeliverAddress());
-        order.setCustomer(customerService.getCustomerById(orderRequest.getCustomerId()));
+        order.setCustomer(customerService.findByUserName(orderRequest.getCustomerId()));
         order.setBranch(branchService.findById(orderRequest.getBranchId()));
         order.setStatus(OrderStatusType.PENDING);
 
@@ -98,7 +96,7 @@ public class OrderService implements IOrderService {
             Product product = productService.findProductById(request.getProductId());
             orderDetail.setOrder(save);
             orderDetail.setProduct(product);
-            orderDetail.setProductQt(request.getProductQt());
+            orderDetail.setProductQt(request.getQty());
 
             totalPrice += product.getSellingPrice();
 
@@ -176,11 +174,13 @@ public class OrderService implements IOrderService {
             throw new InvalidArgumentException("Confirmation request not found");
 
         Order order = findOrderById(orderConfirmRequest.getOrderId());
-        order.setSalesAgent(salesAgentService.findSalesAgentById(orderConfirmRequest.getSalesAgentId()));
+        order.setSalesAgent(salesAgentService.findByUserName(orderConfirmRequest.getSalesAgentUserName()));
         order.setSaleAgentNote(orderConfirmRequest.getSaleAgentNote());
         order.setDriver(driverService.findById(orderConfirmRequest.getDriverId()));
         order.setVehicle(vehicleService.findVehicleById(orderConfirmRequest.getVehicleId()));
         order.setDeliverDate(LocalDate.now());
+        order.setStatus(OrderStatusType.OUT_TO_DELIVER);
+        orderRepository.save(order);
     }
 
 
@@ -191,7 +191,7 @@ public class OrderService implements IOrderService {
      */
     public OrderResponse response(Order order){
         OrderResponse orderResponse = modelMapper.map(order, OrderResponse.class);
-
+        orderResponse.setCustomer(modelMapper.map(order.getCustomer() != null ? order.getCustomer() : new Customer(), CustomerResponse.class));
         List<OrderDetailResponse> responseList = new ArrayList<>();
         order.getOrderDetails().forEach(orderDetail -> {
             OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
@@ -201,6 +201,7 @@ public class OrderService implements IOrderService {
             orderDetailResponse.setSellingPrice(orderDetail.getProduct().getSellingPrice());
             orderDetailResponse.setImgUrl(productService.saveFile(orderDetail.getProduct().getImgUrl()));
             orderDetailResponse.setQty(orderDetail.getProductQt());
+            orderDetailResponse.setSupplierName(orderDetail.getProduct().getSupplierId().getSupplierName());
 
             responseList.add(orderDetailResponse);
         });

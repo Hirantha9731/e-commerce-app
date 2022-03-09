@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin
 public class OrderController {
 
     private final IOrderService orderService;
@@ -45,7 +44,7 @@ public class OrderController {
         ));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/single/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable Long id){
 
         Order order = orderService.findOrderById(id);

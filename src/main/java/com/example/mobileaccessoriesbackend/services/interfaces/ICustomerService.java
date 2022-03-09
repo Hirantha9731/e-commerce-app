@@ -16,4 +16,6 @@ public interface ICustomerService {
     CustomerResponse updateCustomerDetails(CustomerRequest customerRequest);
 
     Boolean deleteCustomer(Long id);
+
+    Customer findByUserName(String username);
 }

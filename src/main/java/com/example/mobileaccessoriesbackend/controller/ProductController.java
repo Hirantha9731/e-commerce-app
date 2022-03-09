@@ -15,7 +15,7 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
 
-    private IProductService productService;
+    private final IProductService productService;
 
 
     public ProductController(IProductService productService) {

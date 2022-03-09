@@ -11,10 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class ProductRequest {
 
-    private Long productId;
+    private String productId;
     private String productName;
     private String description;
-    private Double sellingPrice;
+    private String sellingPrice;
     private MultipartFile imgUrl;
-    private Long supplierId;
+    private String supplierId;
 }

@@ -21,5 +21,7 @@ public interface ISalesAgentService {
 
     void deleteSalesAgent(Long id);
 
+    SalesAgent findByUserName(String username);
+
 
 }

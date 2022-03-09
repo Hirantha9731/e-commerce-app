@@ -18,7 +18,7 @@ import java.util.List;
 @CrossOrigin
 public class SupplierController {
 
-    private ISupplierService supplierService;
+    private final ISupplierService supplierService;
 
     public SupplierController(ISupplierService supplierService) {
         this.supplierService = supplierService;

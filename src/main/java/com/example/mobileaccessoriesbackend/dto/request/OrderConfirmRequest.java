@@ -9,7 +9,7 @@ public class OrderConfirmRequest {
     @NotNull
     private Long orderId;
     @NotNull
-    private Long salesAgentId;
+    private String salesAgentUserName;
     private String saleAgentNote;
     @NotNull
     private Long vehicleId;

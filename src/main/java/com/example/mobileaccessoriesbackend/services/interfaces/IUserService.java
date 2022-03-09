@@ -21,4 +21,6 @@ public interface IUserService {
     Boolean deleteUser(Long id);
 
     ResponseEntity<?> signIn(AuthenticationRequest authenticationRequest);
+
+    User findUserById(String id);
 }

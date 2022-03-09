@@ -142,6 +142,11 @@ public class SalesAgentService implements ISalesAgentService {
 
     }
 
+    @Override
+    public SalesAgent findByUserName(String username) {
+        return salesAgentRepository.findByUsername(username);
+    }
+
 
     public SalesAgentResponse response(SalesAgent salesAgent){
 

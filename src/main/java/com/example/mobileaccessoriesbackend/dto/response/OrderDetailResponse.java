@@ -16,4 +16,5 @@ public class OrderDetailResponse {
     private Double sellingPrice;
     private byte[] imgUrl;
     private int qty;
+    private String supplierName;
 }
